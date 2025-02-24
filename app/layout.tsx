@@ -3,8 +3,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Shirel Malka',
-  description: 'Created with v0',
-  generator: 'Shirel Malka.dev',
+  description: 'Created with Shirel Malka',
+  generator: 'Next.js',
 }
 
 export default function RootLayout({
