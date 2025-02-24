@@ -37,10 +37,10 @@ export default function Footer() {
           </div>
           <div className="w-full md:w-1/4 mb-6 md:mb-0">
             <h4 className="text-lg font-semibold mb-2">צור קשר</h4>
-            <p className="text-sm text-gray-400 mb-2">רחוב הלק 123</p>
-            <p className="text-sm text-gray-400 mb-2">תל אביב, ישראל</p>
-            <p className="text-sm text-gray-400 mb-2">טלפון: 03-1234567</p>
-            <p className="text-sm text-gray-400">אימייל: info@lakgal.co.il</p>
+            <p className="text-sm text-gray-400 mb-2">רחוב יפה נוף 41</p>
+            <p className="text-sm text-gray-400 mb-2">נהריה, ישראל</p>
+            <p className="text-sm text-gray-400 mb-2">טלפון: 053-9342613</p>
+            <p className="text-sm text-gray-400">אימייל: eliyauo2580@gmail.com</p>
           </div>
           <div className="w-full md:w-1/4">
             <h4 className="text-lg font-semibold mb-2">עקבו אחרינו</h4>
@@ -58,7 +58,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-700 mt-8 pt-4 text-center text-sm text-gray-400">
-          © {new Date().getFullYear()} לק גל שלי שיראל. כל הזכויות שמורות.
+          © {new Date().getFullYear()} לק גל שיראל. כל הזכויות שמורות.
         </div>
       </div>
     </footer>
