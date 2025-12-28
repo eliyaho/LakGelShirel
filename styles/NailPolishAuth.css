@@ -1,0 +1,117 @@
+/* Overlay מטושטש */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* כפתור לדוגמא לפתיחת הבקבוק */
+.open-bottle-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  padding: 10px 20px;
+  background: #b85c7a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* הסצנה */
+.scene {
+  perspective: 1200px;
+}
+
+/* הבקבוק */
+.bottle {
+  width: 180px;      /* בקבוק רחב וקצר */
+  height: 300px;     /* קטן יחסית */
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1s ease;
+}
+
+.bottle.rotate {
+  transform: rotateY(180deg);
+}
+
+/* פקק ארוך ושחור */
+.cap {
+  width: 60px;       /* צר יחסית */
+  height: 100px;     /* ארוך */
+  background: #111;
+  border-radius: 10px 10px 4px 4px;
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: transform 1s ease;
+  z-index: 5;
+}
+
+.cap.open {
+  transform: translate(-50%, -150px);
+}
+
+/* גוף הבקבוק */
+.glass {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #f7cbd6, #f28ebd);
+  border-radius: 40px 40px 20px 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* צדדים (Login / Register) */
+.face {
+  position: absolute;
+  inset: 0;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  backface-visibility: hidden;
+  color: #5a2c3b;
+  background: rgba(255,255,255,0.6);
+  border-radius: 40px 40px 20px 20px;
+}
+
+.face h2 {
+  text-align: center;
+}
+
+.face input {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+}
+
+.face button {
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background: #b85c7a;
+  color: white;
+  cursor: pointer;
+}
+
+.face span {
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #7a3d52;
+}
+
+.back {
+  transform: rotateY(180deg);
+}
