@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { connectMongo } from "@/lib/mongodb";
+import { connectDB  } from "@/lib/mongodb";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -11,7 +11,7 @@ const validateName = (name) => /^[a-zA-Zא-ת0-9 ]{2,}$/.test(name.trim());
 
 export async function POST(req) {
   try {
-    await connectMongo();
+    await connectDB ();
 
     const { name, email, password } = await req.json();
 
