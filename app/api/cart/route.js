@@ -1,28 +1,36 @@
 import { connectDB } from "@/lib/mongodb";
-import Cart from "@/models/Cart";
+import mongoose from "mongoose";
 
 export async function POST(req) {
-  try {
-    await connectDB();
-    const body = await req.json();
-    const { userId, product } = body;
+  // חיבור למסד – רק אם URI קיים
+  await connectDB();
 
-    if (!userId || !product) return new Response(JSON.stringify({ message: "Missing data" }), { status: 400 });
+  const body = await req.json();
+  const { userId, product } = body;
 
-    let cart = await Cart.findOne({ userId });
-
-    if (cart) {
-      const index = cart.items.findIndex(item => item.id === product._id);
-      if (index > -1) cart.items[index].quantity += 1;
-      else cart.items.push({ id: product._id, name: product.name, price: product.price, quantity: 1 });
-      await cart.save();
-    } else {
-      cart = await Cart.create({ userId, items: [{ id: product._id, name: product.name, price: product.price, quantity: 1 }] });
-    }
-
-    return new Response(JSON.stringify(cart), { status: 200 });
-  } catch (err) {
-    console.error("POST CART ERROR:", err);
-    return new Response(JSON.stringify({ message: err.message }), { status: 500 });
+  if (!userId || !product) {
+    return new Response(JSON.stringify({ message: "Missing data" }), { status: 400 });
   }
+
+  const Cart = mongoose.models.Cart || mongoose.model("Cart", new mongoose.Schema({
+    userId: String,
+    items: [{ id: String, name: String, price: Number, quantity: Number }]
+  }));
+
+  let userCart = await Cart.findOne({ userId });
+
+  if (userCart) {
+    const existingIndex = userCart.items.findIndex(item => item.id === product._id);
+    if (existingIndex > -1) userCart.items[existingIndex].quantity += 1;
+    else userCart.items.push({ id: product._id, name: product.name, price: product.price, quantity: 1 });
+
+    await userCart.save();
+  } else {
+    await Cart.create({
+      userId,
+      items: [{ id: product._id, name: product.name, price: product.price, quantity: 1 }]
+    });
+  }
+
+  return new Response(JSON.stringify({ message: "Added to cart" }), { status: 200 });
 }
