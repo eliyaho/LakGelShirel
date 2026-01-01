@@ -55,15 +55,25 @@ export default function NailPolishAuth() {
     });
   };
 
+  // מונע שהאירועים של המגע יפריעו לכפתורים
+  const stopPropagation = e => {
+    e.stopPropagation();
+  };
+
   return (
-    <div className="scene" onClick={e => e.stopPropagation()}>
-                {/* הודעות */}
-          {message && <p className="success">{message}</p>}
-          {error && <p className="error">{error}</p>}
+    <div
+      className="scene"
+      onClick={stopPropagation}
+      onTouchStart={stopPropagation}
+    >
+      {/* הודעות */}
+      {message && <p className="success">{message}</p>}
+      {error && <p className="error">{error}</p>}
 
       <div className={`bottle ${isRegister ? "rotate" : ""}`}>
         <div className={`cap ${openCap ? "open" : ""}`} />
         <div className="glass">
+
           {/* Login */}
           <div className="face front">
             <h2>התחברות</h2>
@@ -83,12 +93,16 @@ export default function NailPolishAuth() {
 
             <button
               onClick={handleLogin}
+              onTouchStart={handleLogin}
               disabled={status === "loading"}
             >
               {status === "loading" ? "מתחברת..." : "התחברי"}
             </button>
 
-            <span onClick={() => setIsRegister(true)}>
+            <span
+              onClick={() => setIsRegister(true)}
+              onTouchStart={() => setIsRegister(true)}
+            >
               עדיין לא נרשמת?
             </span>
           </div>
@@ -118,12 +132,16 @@ export default function NailPolishAuth() {
 
             <button
               onClick={handleRegister}
+              onTouchStart={handleRegister}
               disabled={status === "loading"}
             >
               {status === "loading" ? "נרשמת..." : "הרשמה"}
             </button>
 
-            <span onClick={() => setIsRegister(false)}>
+            <span
+              onClick={() => setIsRegister(false)}
+              onTouchStart={() => setIsRegister(false)}
+            >
               כבר יש לך חשבון?
             </span>
           </div>
