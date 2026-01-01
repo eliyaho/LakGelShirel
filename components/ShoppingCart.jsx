@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -5,24 +7,19 @@ import {
   removeItem,
   changeQuantity,
 } from '@/components/redax/cartSlice';
-import { setShoppingsPageStatus } from '@/components/redax/headerSlice';
 
 const ShoppingCart = () => {
   const dispatch = useDispatch();
 
-  const isOpen = useSelector(state => state.headers.shoppingsPageStatus);
   const { items, status } = useSelector(state => state.cart);
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
 
   // שליפת סל קניות מהשרת רק אם משתמש מחובר
   useEffect(() => {
-    if (isOpen && isAuthenticated) {
+    if ( isAuthenticated) {
       dispatch(fetchCart());
     }
-  }, [isOpen, isAuthenticated, dispatch]);
-
-  if (!isOpen) return null;
-
+  }, [isAuthenticated, dispatch]);
   const totalPrice = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -43,15 +40,8 @@ const ShoppingCart = () => {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-center">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 relative">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 relative" >
 
-        {/* Close */}
-        <button
-          onClick={() => dispatch(setShoppingsPageStatus(false))}
-          className="absolute top-4 right-4 text-gray-400 hover:text-black text-xl"
-        >
-          ✕
-        </button>
 
         {/* Title */}
         <h2 className="text-2xl font-bold text-center mb-6">

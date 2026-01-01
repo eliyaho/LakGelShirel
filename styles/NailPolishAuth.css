@@ -1,3 +1,4 @@
+/* ========================== */
 /* Overlay מטושטש */
 .overlay {
   position: fixed;
@@ -24,6 +25,7 @@
   z-index: 10;
 }
 
+/* ========================== */
 /* הסצנה */
 .scene {
   perspective: 1200px;
@@ -103,6 +105,11 @@
   background: #b85c7a;
   color: white;
   cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.face button:hover {
+  background: #a04868;
 }
 
 .face span {
@@ -114,4 +121,38 @@
 
 .back {
   transform: rotateY(180deg);
+}
+
+/* ========================== */
+/* הודעות הצלחה / שגיאה בתחתית הדף */
+.success,
+.error {
+  position: fixed;      /* קבוע במקום */
+  bottom: -90px;         /* למטה */
+  left: 50%;            /* באמצע רוחבית */
+  transform: translateX(-50%);
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 8px;
+   min-width: 120px;      /* רוחב מינימום */
+  max-width: 80%;
+  margin: 0;            /* אין מרג'ין למעלה/למטה */
+  z-index: 2000;        /* מעל כל דבר אחר */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* הצלחה */
+.success {
+  background: rgba(46, 204, 113, 0.2);
+  color: #1e8449;
+  border: 1px solid rgba(46, 204, 113, 0.4);
+}
+
+/* שגיאה */
+.error {
+  background: rgba(231, 76, 60, 0.2);
+  color: #922b21;
+  border: 1px solid rgba(231, 76, 60, 0.4);
 }

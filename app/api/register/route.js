@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { connectMongo } from "@/lib/mongodb";
-import User from "@/lib/models/User";
-import bcrypt from "bcrypt";
+import User from "@/models/User";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
+// פונקציות ואלידציה
+const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const validatePassword = (password) => password.length >= 6;
+const validateName = (name) => /^[a-zA-Zא-ת0-9 ]{2,}$/.test(name.trim());
 
 export async function POST(req) {
   try {
@@ -10,6 +15,7 @@ export async function POST(req) {
 
     const { name, email, password } = await req.json();
 
+    // בדיקות חוקיות
     if (!name || !email || !password) {
       return NextResponse.json(
         { message: "חסרים פרטים" },
@@ -17,22 +23,47 @@ export async function POST(req) {
       );
     }
 
-    const exists = await User.findOne({ email });
-    if (exists) {
+    if (!validateName(name)) {
       return NextResponse.json(
-        { message: "האימייל כבר קיים" },
+        { message: "שם לא חוקי – מינימום 2 תווים, אותיות ומספרים בלבד" },
         { status: 400 }
       );
     }
 
+    if (!validateEmail(email)) {
+      return NextResponse.json(
+        { message: "כתובת אימייל לא חוקית" },
+        { status: 400 }
+      );
+    }
+
+    if (!validatePassword(password)) {
+      return NextResponse.json(
+        { message: "סיסמה חייבת להכיל לפחות 6 תווים" },
+        { status: 400 }
+      );
+    }
+
+    // בדיקה אם המשתמש קיים
+    const exists = await User.findOne({ email });
+    if (exists) {
+      return NextResponse.json(
+        { message: "האימייל כבר קיים" },
+        { status: 409 }
+      );
+    }
+
+    // הצפנת סיסמה
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // יצירת המשתמש
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
     });
 
+    // יצירת JWT
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
@@ -40,6 +71,7 @@ export async function POST(req) {
     );
 
     return NextResponse.json({
+      message: "נרשמת בהצלחה",
       user: {
         id: user._id,
         name: user.name,
@@ -47,6 +79,7 @@ export async function POST(req) {
       },
       token,
     });
+
   } catch (err) {
     console.error("REGISTER ERROR:", err);
     return NextResponse.json(

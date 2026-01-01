@@ -7,55 +7,125 @@ import { loginUser, registerUser } from "@/components/redax/authSlice";
 
 export default function NailPolishAuth() {
   const dispatch = useDispatch();
-  const status = useSelector(state => state.auth.status);
+  const { status } = useSelector(state => state.auth);
 
   const [isRegister, setIsRegister] = useState(false);
   const [openCap, setOpenCap] = useState(false);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
   const handleLogin = () => {
+    setMessage("");
+    setError("");
+
     dispatch(loginUser({ email, password })).then(res => {
       if (res.meta.requestStatus === "fulfilled") {
         setOpenCap(true);
-        // setTimeout(() => window.location.href = "/home", 1200);
+        setMessage("התחברת בהצלחה 💖");
+
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1200);
+      } else {
+        setError(res.payload || "שגיאה בהתחברות");
       }
     });
   };
 
   const handleRegister = () => {
+    setMessage("");
+    setError("");
+
     dispatch(registerUser({ name, email, password })).then(res => {
       if (res.meta.requestStatus === "fulfilled") {
         setOpenCap(true);
-        // setTimeout(() => window.location.href = "/home", 1200);
+        setMessage("נרשמת בהצלחה 💅");
+
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1200);
+      } else {
+        setError(res.payload || "שגיאה בהרשמה");
       }
     });
   };
 
   return (
     <div className="scene" onClick={e => e.stopPropagation()}>
+                {/* הודעות */}
+          {message && <p className="success">{message}</p>}
+          {error && <p className="error">{error}</p>}
+
       <div className={`bottle ${isRegister ? "rotate" : ""}`}>
         <div className={`cap ${openCap ? "open" : ""}`} />
         <div className="glass">
-
           {/* Login */}
           <div className="face front">
             <h2>התחברות</h2>
-            <input placeholder="אימייל" value={email} onChange={e => setEmail(e.target.value)} />
-            <input type="password" placeholder="סיסמה" value={password} onChange={e => setPassword(e.target.value)} />
-            <button onClick={handleLogin} disabled={status === "loading"}>התחברי</button>
-            <span onClick={() => setIsRegister(true)}>עדיין לא נרשמת?</span>
+
+            <input
+              placeholder="אימייל"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+
+            <input
+              type="password"
+              placeholder="סיסמה"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+
+            <button
+              onClick={handleLogin}
+              disabled={status === "loading"}
+            >
+              {status === "loading" ? "מתחברת..." : "התחברי"}
+            </button>
+
+            <span onClick={() => setIsRegister(true)}>
+              עדיין לא נרשמת?
+            </span>
           </div>
 
           {/* Register */}
           <div className="face back">
             <h2>הרשמה</h2>
-            <input placeholder="שם מלא" value={name} onChange={e => setName(e.target.value)} />
-            <input placeholder="אימייל" value={email} onChange={e => setEmail(e.target.value)} />
-            <input type="password" placeholder="סיסמה" value={password} onChange={e => setPassword(e.target.value)} />
-            <button onClick={handleRegister} disabled={status === "loading"}>הרשמה</button>
-            <span onClick={() => setIsRegister(false)}>כבר יש לך חשבון?</span>
+
+            <input
+              placeholder="שם מלא"
+              value={name}
+              onChange={e => setName(e.target.value)}
+            />
+
+            <input
+              placeholder="אימייל"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+
+            <input
+              type="password"
+              placeholder="סיסמה"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+
+            <button
+              onClick={handleRegister}
+              disabled={status === "loading"}
+            >
+              {status === "loading" ? "נרשמת..." : "הרשמה"}
+            </button>
+
+            <span onClick={() => setIsRegister(false)}>
+              כבר יש לך חשבון?
+            </span>
           </div>
 
         </div>
