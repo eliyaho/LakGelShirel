@@ -1,31 +1,71 @@
+import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Product from "@/models/Product";
+import fs from "fs/promises";
+import path from "path";
 
-export async function POST(req) {
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+export async function POST(request) {
   try {
     await connectDB();
-    const body = await req.json();
 
-    // אם אתה רוצה, אפשר לוודא שכל השדות קיימים
-    const { name, price, image, category, description } = body;
-    if (!name || !price || !category || !description) {
-      return new Response(
-        JSON.stringify({ message: "Missing required fields" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+    const formData = await request.formData();
+
+    const name = formData.get("name");
+    const priceStr = formData.get("price");
+    const category = formData.get("category");
+    const description = formData.get("description");
+    const image = formData.get("image");
+
+    if (!name || !priceStr || !category || !description || !image) {
+      return NextResponse.json(
+        { message: "חסרים שדות חובה" },
+        { status: 400 }
       );
     }
 
-    const product = await Product.create(body);
+    const price = Number(priceStr);
+    if (isNaN(price) || price <= 0) {
+      return NextResponse.json(
+        { message: "מחיר לא תקין" },
+        { status: 400 }
+      );
+    }
 
-    return new Response(JSON.stringify(product), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
+    if (!image.type.startsWith("image/")) {
+      return NextResponse.json(
+        { message: "ניתן להעלות רק תמונה" },
+        { status: 400 }
+      );
+    }
+
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    await fs.mkdir(uploadDir, { recursive: true });
+
+    const fileName = `${Date.now()}-${image.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+    const filePath = path.join(uploadDir, fileName);
+
+    const buffer = Buffer.from(await image.arrayBuffer());
+    await fs.writeFile(filePath, buffer);
+
+    const imageUrl = `/uploads/${fileName}`;
+
+    const product = await Product.create({
+      name,
+      price,
+      category,
+      description,
+      image: imageUrl,
     });
-  } catch (err) {
-    console.error("ADD PRODUCT ERROR:", err);
-    return new Response(
-      JSON.stringify({ message: err.message }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+
+    return NextResponse.json(product, { status: 201 });
+  } catch (error) {
+    console.error("ADD PRODUCT ERROR:", error);
+    return NextResponse.json(
+      { message: "שגיאת שרת" },
+      { status: 500 }
     );
   }
 }
